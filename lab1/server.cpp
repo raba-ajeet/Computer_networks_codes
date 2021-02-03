@@ -9,11 +9,12 @@
 #include <unistd.h> 
 #include<fcntl.h>  // for files reading
 #include<poll.h> //  for poll
-int val=1;
+int val=0;
 void handler(int signum){
     // change the flow 
     printf("signal is coming from D \n");
-    val=1-val;
+    val++;
+    printf("the kill command count is %d \n",val);
 }
 
 int main(){
@@ -32,13 +33,13 @@ int main(){
     if(c1>0){
         int c2=fork();
         if(c2>0){
-            struct pollfd pfds[2];
             signal(SIGUSR1,handler);
-                int pid=getpid();
+            struct pollfd pfds[2];
+                int pidOfProcess=getpid();
                 char * myfifo="/tmp/myfifo";
                 mkfifo(myfifo,0666);
                 int dfd=open(myfifo,O_WRONLY);
-                write(dfd,&pid,1024);
+                write(dfd,&pidOfProcess,sizeof(pidOfProcess));
                 close(dfd);
             // parent
             char buf1[100];
@@ -62,7 +63,7 @@ int main(){
                         read(pfds[i].fd,buf1,10);
                         printf("parent printing : %s \n",buf1);
                         fflush(stdout);
-                        if(val){
+                        if(val%2==0){
                             write(ffd1,buf1,sizeof(buf1));
                             write(ffd2,buf1,sizeof(buf1));
                         }

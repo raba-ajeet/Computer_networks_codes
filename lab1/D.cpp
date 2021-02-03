@@ -20,4 +20,5 @@ int main(){
         sleep(5);
         kill(pid,SIGUSR1);
     }
+    return 0;
 }
