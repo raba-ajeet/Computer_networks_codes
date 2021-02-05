@@ -13,7 +13,6 @@
 int main(){
             char * myfifo1="/tmp/myfifo1";
     char buf[100];
-    // printf("write in this fifo ");
     mkfifo(myfifo1,0666);
     int fd1=open(myfifo1,O_WRONLY);
     while(1){
